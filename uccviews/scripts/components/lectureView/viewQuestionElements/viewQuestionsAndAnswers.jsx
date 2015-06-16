@@ -1,9 +1,22 @@
 var React = require('react'),
+    questionsActions  = require('../../../actions/questions'),
+    lecturesStore  = require('../../../stores/lectures'),
     Question = require('./../QAElements/question.jsx'),
     AnswerForm = require('./answerForm.jsx'),
     Answer = require('./../QAElements/answer.jsx');
 
 var ViewQuestionAndAnswers = React.createClass({
+  getInitialState: function(){
+    var questions = lecturesStore.getQuestions();
+    var question;
+    for(var i = 0; i < questions.length; i++){
+      if(questions[i]._id === this.props.questionId){
+        question = questions[i];
+        break;
+      }
+    }
+    return {question: question};
+  },
   render: function(){
     var qID = this.props.questionId;
     return (<div>

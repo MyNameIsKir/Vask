@@ -57,7 +57,7 @@ module.exports = {
             // console.log('Question successfuly added.');
             // after successfuly saved, update the questions passing the video ID
             self.getQuestions(question.video);
-            
+
 
           } else {
             // thow the error
@@ -65,5 +65,57 @@ module.exports = {
           }
          });
 
+  },
+
+  voteQuestion: function(question, inc, answerIndex){
+    var data = {
+      inc : inc,
+      _id : question._id
+    };
+    var self = this;
+    var url = '/votequestion';
+    if (answerIndex!==undefined) {
+      data.idx = answerIndex;
+      url = '/voteanswer'
+    }
+    $.ajax({
+      url: url,
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify(data),
+      statusCode: {
+        201: function (data) {
+          self.getQuestions(question.video);
+          console.log('win');
+          console.log(data);
+          },
+        500: function (err) {
+          console.log('lose')
+        }
+      }
+    });
+  },
+
+  voteUp: function(question, answerIndex){
+    console.log("vote up");
+    var isAnswer = answerIndex !== undefined;
+    if(isAnswer){
+      console.log('vote answer');
+      this.voteQuestion(question,1,answerIndex);
+    } else {
+      console.log('question up vote');
+      this.voteQuestion(question,1);
+    }
+  },
+
+  voteDown: function(question, answerIndex){
+    console.log("vote down");
+    var isAnswer = answerIndex !== undefined;
+    if(isAnswer){
+      console.log('vote answer');
+      this.voteQuestion(question,-1,answerIndex);
+    } else {
+      this.voteQuestion(question,-1);
+    }
   }
 }
